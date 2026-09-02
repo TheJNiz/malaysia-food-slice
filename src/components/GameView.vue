@@ -40,8 +40,10 @@ onBeforeUnmount(() => {
 
 <template>
   <section class="game-wrap">
-    <div class="game-card">
-      <div ref="gameHost" class="game-host" />
+    <div class="game-stage">
+      <div class="game-card">
+        <div ref="gameHost" class="game-host" />
+      </div>
     </div>
 
     <p class="hint">
@@ -52,17 +54,45 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .game-wrap {
-  width: min(100%, 620px);
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
   margin: 0 auto;
-  padding: 16px;
+  padding:
+    max(8px, env(safe-area-inset-top))
+    max(8px, env(safe-area-inset-right))
+    max(8px, env(safe-area-inset-bottom))
+    max(8px, env(safe-area-inset-left));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.game-stage {
+  width: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
+  display: grid;
+  place-items: center;
+  container-type: size;
 }
 
 .game-card {
+  width: min(100%, 620px, calc(56.25dvh - 32px));
+  aspect-ratio: 9 / 16;
   overflow: hidden;
   border-radius: 28px;
   border: 1px solid rgba(210,1,2,.28);
   box-shadow: 0 24px 70px rgba(73,0,1,.45);
   background: #170506;
+}
+
+@supports (width: 1cqh) {
+  .game-card {
+    width: min(100%, 620px, 56.25cqh);
+  }
 }
 
 .game-host {
@@ -78,7 +108,8 @@ onBeforeUnmount(() => {
 }
 
 .hint {
-  margin: 12px auto 0;
+  margin: 0 auto;
+  flex: 0 0 auto;
   max-width: 520px;
   color: rgba(255,255,255,.58);
   text-align: center;
