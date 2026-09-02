@@ -35,6 +35,9 @@ const FOOD_TYPES = [
 
 const WIDTH = 540
 const HEIGHT = 960
+const BRAND_RED = 0xd20102
+const BRAND_RED_LIGHT = '#ff5b5c'
+const BRAND_PANEL = 0x1a0808
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -42,6 +45,12 @@ export default class GameScene extends Phaser.Scene {
   }
 
   preload() {
+    this.load.svg(
+      'foodtale-logo',
+      `${import.meta.env.BASE_URL}assets/branding/foodtale-app.svg`,
+      { width: 206, height: 206 }
+    )
+
     this.load.audio(
       'nasi-lemak-dash',
       `${import.meta.env.BASE_URL}audio/nasi-lemak-dash.mp3`
@@ -106,25 +115,20 @@ export default class GameScene extends Phaser.Scene {
 
   createBackground() {
     const bg = this.add.graphics()
-    bg.fillGradientStyle(0x161616, 0x161616, 0x070707, 0x070707, 1)
+    bg.fillGradientStyle(0x210809, 0x210809, 0x080101, 0x080101, 1)
     bg.fillRect(0, 0, WIDTH, HEIGHT)
 
     const glow = this.add.graphics()
-    glow.fillStyle(0x5d2c10, 0.2)
+    glow.fillStyle(BRAND_RED, 0.18)
     glow.fillCircle(WIDTH / 2, 210, 260)
 
-    this.add.text(WIDTH / 2, 82, 'MALAYSIA', {
-      fontFamily: 'Arial Black, Arial',
-      fontSize: '20px',
-      letterSpacing: 8,
-      color: '#ffffff',
-      alpha: 0.18
-    }).setOrigin(0.5)
+    this.add.image(WIDTH / 2, 64, 'foodtale-logo')
+      .setDisplaySize(54, 54)
 
     this.add.text(WIDTH / 2, 116, 'FOOD SLICE', {
       fontFamily: 'Arial Black, Arial',
       fontSize: '42px',
-      color: '#ffbf5d'
+      color: '#ffffff'
     }).setOrigin(0.5)
 
     this.trailGraphics = this.add.graphics().setDepth(50)
@@ -190,7 +194,7 @@ export default class GameScene extends Phaser.Scene {
     this.comboText = this.add.text(WIDTH / 2, 205, '', {
       fontFamily: 'Arial Black, Arial',
       fontSize: '34px',
-      color: '#ffd463',
+      color: BRAND_RED_LIGHT,
       stroke: '#000000',
       strokeThickness: 7
     }).setOrigin(0.5).setDepth(100)
@@ -200,7 +204,7 @@ export default class GameScene extends Phaser.Scene {
     this.overlay = this.add.container(0, 0).setDepth(200)
 
     const shade = this.add.rectangle(0, 0, WIDTH, HEIGHT, 0x000000, 0.48).setOrigin(0)
-    const panel = this.add.rectangle(WIDTH / 2, HEIGHT / 2 + 80, 430, 380, 0x171717, 0.96)
+    const panel = this.add.rectangle(WIDTH / 2, HEIGHT / 2 + 80, 430, 380, BRAND_PANEL, 0.96)
       .setStrokeStyle(2, 0xffffff, 0.08)
 
     const title = this.add.text(WIDTH / 2, 363, 'Slice Malaysian favourites!', {
@@ -226,16 +230,16 @@ export default class GameScene extends Phaser.Scene {
     const warning = this.add.text(WIDTH / 2, 568, 'Avoid the 💣 bomb', {
       fontFamily: 'Arial Black, Arial',
       fontSize: '18px',
-      color: '#ff7d63'
+      color: '#ff7778'
     }).setOrigin(0.5)
 
-    const button = this.add.rectangle(WIDTH / 2, 650, 250, 68, 0xf3a63c)
+    const button = this.add.rectangle(WIDTH / 2, 650, 250, 68, BRAND_RED)
       .setInteractive({ useHandCursor: true })
 
     const buttonText = this.add.text(WIDTH / 2, 650, 'START SLICING', {
       fontFamily: 'Arial Black, Arial',
       fontSize: '20px',
-      color: '#141414'
+      color: '#ffffff'
     }).setOrigin(0.5)
 
     button.on('pointerdown', () => this.startGame())
@@ -634,14 +638,14 @@ export default class GameScene extends Phaser.Scene {
       .setOrigin(0)
       .setDepth(190)
 
-    const panel = this.add.rectangle(WIDTH / 2, HEIGHT / 2, 420, 410, 0x171717, 1)
+    const panel = this.add.rectangle(WIDTH / 2, HEIGHT / 2, 420, 410, BRAND_PANEL, 1)
       .setStrokeStyle(2, 0xffffff, 0.09)
       .setDepth(191)
 
     this.add.text(WIDTH / 2, 360, reason, {
       fontFamily: 'Arial Black, Arial',
       fontSize: '36px',
-      color: '#ffb64d'
+      color: BRAND_RED_LIGHT
     }).setOrigin(0.5).setDepth(192)
 
     this.add.text(WIDTH / 2, 425, 'FINAL SCORE', {
@@ -657,14 +661,14 @@ export default class GameScene extends Phaser.Scene {
       color: '#ffffff'
     }).setOrigin(0.5).setDepth(192)
 
-    const btn = this.add.rectangle(WIDTH / 2, 600, 250, 68, 0xf3a63c)
+    const btn = this.add.rectangle(WIDTH / 2, 600, 250, 68, BRAND_RED)
       .setInteractive({ useHandCursor: true })
       .setDepth(192)
 
     this.add.text(WIDTH / 2, 600, 'PLAY AGAIN', {
       fontFamily: 'Arial Black, Arial',
       fontSize: '21px',
-      color: '#151515'
+      color: '#ffffff'
     }).setOrigin(0.5).setDepth(193)
 
     btn.on('pointerdown', () => this.scene.restart())

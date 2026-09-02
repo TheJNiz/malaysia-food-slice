@@ -10,7 +10,7 @@ onMounted(() => {
   game = new Phaser.Game({
     type: Phaser.AUTO,
     parent: gameHost.value,
-    backgroundColor: '#131313',
+    backgroundColor: '#170506',
     render: {
       antialias: true,
       pixelArt: false
@@ -60,9 +60,9 @@ onBeforeUnmount(() => {
 .game-card {
   overflow: hidden;
   border-radius: 28px;
-  border: 1px solid rgba(255,255,255,.08);
-  box-shadow: 0 24px 70px rgba(0,0,0,.45);
-  background: #131313;
+  border: 1px solid rgba(210,1,2,.28);
+  box-shadow: 0 24px 70px rgba(73,0,1,.45);
+  background: #170506;
 }
 
 .game-host {

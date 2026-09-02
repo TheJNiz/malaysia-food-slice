@@ -42,3 +42,4 @@ Pushes to `main` are automatically built and deployed to GitHub Pages.
 ## Artwork
 
 The food uses original transparent PNG game sprites stored in `public/assets/food/`.
+The Foodtale logo is stored in `public/assets/branding/` and the interface uses the logo's red-and-white palette.
