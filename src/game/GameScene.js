@@ -382,7 +382,7 @@ export default class GameScene extends Phaser.Scene {
 
     const targetX = Phaser.Math.Between(105, WIDTH - 105)
     const dx = targetX - x
-    container.body.setVelocity(dx * 0.9, Phaser.Math.Between(-1130, -930))
+    container.body.setVelocity(dx * 0.9, Phaser.Math.Between(-1356, -1116))
     container.body.setAngularVelocity(Phaser.Math.Between(-170, 170))
 
     this.activeObjects.add(container)
