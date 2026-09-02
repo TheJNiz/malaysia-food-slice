@@ -241,13 +241,7 @@ export default class GameScene extends Phaser.Scene {
       color: BRAND_RED_LIGHT
     }).setOrigin(0.5)
 
-    const leaderboardScores = this.add.text(WIDTH / 2, 555, this.formatLeaderboard(), {
-      fontFamily: 'Arial Black, Arial',
-      fontSize: '16px',
-      color: '#ffffff',
-      align: 'center',
-      lineSpacing: 5
-    }).setOrigin(0.5, 0)
+    const leaderboardRows = this.createLeaderboardRows(562)
 
     const button = this.add.rectangle(WIDTH / 2, 735, 250, 68, BRAND_RED)
       .setInteractive({ useHandCursor: true })
@@ -268,7 +262,7 @@ export default class GameScene extends Phaser.Scene {
       subtitle,
       warning,
       leaderboardTitle,
-      leaderboardScores,
+      ...leaderboardRows,
       button,
       buttonText
     ])
@@ -303,11 +297,36 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  formatLeaderboard() {
-    return Array.from({ length: 5 }, (_, index) => {
+  createLeaderboardRows(startY, depth) {
+    const rows = []
+
+    for (let index = 0; index < 5; index++) {
       const score = this.leaderboard[index]
-      return `${index + 1}.  ${score === undefined ? '—' : score.toLocaleString()}`
-    }).join('\n')
+      const y = startY + index * 28
+      const style = {
+        fontFamily: 'Arial Black, Arial',
+        fontSize: '17px',
+        color: '#ffffff'
+      }
+
+      const rankText = this.add.text(WIDTH / 2 - 18, y, `${index + 1}.`, style)
+        .setOrigin(1, 0.5)
+      const scoreText = this.add.text(
+        WIDTH / 2 + 2,
+        y,
+        score === undefined ? '—' : score.toLocaleString(),
+        style
+      ).setOrigin(0, 0.5)
+
+      if (depth !== undefined) {
+        rankText.setDepth(depth)
+        scoreText.setDepth(depth)
+      }
+
+      rows.push(rankText, scoreText)
+    }
+
+    return rows
   }
 
   startGame() {
@@ -722,13 +741,7 @@ export default class GameScene extends Phaser.Scene {
       color: BRAND_RED_LIGHT
     }).setOrigin(0.5).setDepth(192)
 
-    this.add.text(WIDTH / 2, 475, this.formatLeaderboard(), {
-      fontFamily: 'Arial Black, Arial',
-      fontSize: '16px',
-      color: '#ffffff',
-      align: 'center',
-      lineSpacing: 5
-    }).setOrigin(0.5, 0).setDepth(192)
+    this.createLeaderboardRows(485, 192)
 
     const btn = this.add.rectangle(WIDTH / 2, 700, 250, 68, BRAND_RED)
       .setInteractive({ useHandCursor: true })
