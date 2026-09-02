@@ -2,6 +2,8 @@
 
 A lightweight Vue 3 + Phaser web game inspired by swipe-to-slice arcade gameplay.
 
+Play it at [the GitHub Pages site](https://thejniz.github.io/malaysia-food-slice/).
+
 ## Foods included
 
 - Nasi lemak
@@ -34,6 +36,8 @@ npm run build
 ```
 
 The deployable files will be created in `dist/`.
+
+Pushes to `main` are automatically built and deployed to GitHub Pages.
 
 ## Next art upgrade
 
