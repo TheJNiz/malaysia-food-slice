@@ -19,6 +19,7 @@ Play it at [the GitHub Pages site](https://thejniz.github.io/malaysia-food-slice
 - Slice multiple foods quickly for combo bonuses.
 - Miss 3 foods and the game ends.
 - Slice a bomb and the game ends immediately.
+- The top 5 scores are saved in the current browser.
 
 ## Run locally
 

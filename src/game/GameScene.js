@@ -38,6 +38,7 @@ const HEIGHT = 960
 const BRAND_RED = 0xd20102
 const BRAND_RED_LIGHT = '#ff5b5c'
 const BRAND_PANEL = 0x1a0808
+const LEADERBOARD_KEY = 'foodtale-food-slice-top-scores'
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -85,6 +86,7 @@ export default class GameScene extends Phaser.Scene {
     this.gameOver = false
     this.lastPointer = null
     this.bgm = null
+    this.leaderboard = this.loadLeaderboard()
     this.activeObjects = new Set()
     this.trailPoints = []
 
@@ -204,10 +206,10 @@ export default class GameScene extends Phaser.Scene {
     this.overlay = this.add.container(0, 0).setDepth(200)
 
     const shade = this.add.rectangle(0, 0, WIDTH, HEIGHT, 0x000000, 0.48).setOrigin(0)
-    const panel = this.add.rectangle(WIDTH / 2, HEIGHT / 2 + 80, 430, 380, BRAND_PANEL, 0.96)
+    const panel = this.add.rectangle(WIDTH / 2, 525, 430, 560, BRAND_PANEL, 0.96)
       .setStrokeStyle(2, 0xffffff, 0.08)
 
-    const title = this.add.text(WIDTH / 2, 363, 'Slice Malaysian favourites!', {
+    const title = this.add.text(WIDTH / 2, 290, 'Slice Malaysian favourites!', {
       fontFamily: 'Arial Black, Arial',
       fontSize: '28px',
       color: '#ffffff',
@@ -215,11 +217,11 @@ export default class GameScene extends Phaser.Scene {
     }).setOrigin(0.5)
 
     const foodImages = FOOD_TYPES.map((type, index) => (
-      this.add.image(WIDTH / 2 + (index - 2) * 72, 430, `food-${type.key}`)
+      this.add.image(WIDTH / 2 + (index - 2) * 72, 355, `food-${type.key}`)
         .setDisplaySize(58, 58)
     ))
 
-    const subtitle = this.add.text(WIDTH / 2, 500, 'Nasi lemak • Curry puff • Fried chicken\nRoti canai • Bao', {
+    const subtitle = this.add.text(WIDTH / 2, 415, 'Nasi lemak • Curry puff • Fried chicken\nRoti canai • Bao', {
       fontFamily: 'Arial',
       fontSize: '17px',
       color: '#d8d8d8',
@@ -227,16 +229,30 @@ export default class GameScene extends Phaser.Scene {
       lineSpacing: 8
     }).setOrigin(0.5)
 
-    const warning = this.add.text(WIDTH / 2, 568, 'Avoid the 💣 bomb', {
+    const warning = this.add.text(WIDTH / 2, 475, 'Avoid the 💣 bomb', {
       fontFamily: 'Arial Black, Arial',
       fontSize: '18px',
       color: '#ff7778'
     }).setOrigin(0.5)
 
-    const button = this.add.rectangle(WIDTH / 2, 650, 250, 68, BRAND_RED)
+    const leaderboardTitle = this.add.text(WIDTH / 2, 525, 'TOP 5 SCORES', {
+      fontFamily: 'Arial Black, Arial',
+      fontSize: '18px',
+      color: BRAND_RED_LIGHT
+    }).setOrigin(0.5)
+
+    const leaderboardScores = this.add.text(WIDTH / 2, 555, this.formatLeaderboard(), {
+      fontFamily: 'Arial Black, Arial',
+      fontSize: '16px',
+      color: '#ffffff',
+      align: 'center',
+      lineSpacing: 5
+    }).setOrigin(0.5, 0)
+
+    const button = this.add.rectangle(WIDTH / 2, 735, 250, 68, BRAND_RED)
       .setInteractive({ useHandCursor: true })
 
-    const buttonText = this.add.text(WIDTH / 2, 650, 'START SLICING', {
+    const buttonText = this.add.text(WIDTH / 2, 735, 'START SLICING', {
       fontFamily: 'Arial Black, Arial',
       fontSize: '20px',
       color: '#ffffff'
@@ -251,9 +267,47 @@ export default class GameScene extends Phaser.Scene {
       ...foodImages,
       subtitle,
       warning,
+      leaderboardTitle,
+      leaderboardScores,
       button,
       buttonText
     ])
+  }
+
+  loadLeaderboard() {
+    try {
+      const savedScores = JSON.parse(localStorage.getItem(LEADERBOARD_KEY) ?? '[]')
+      if (!Array.isArray(savedScores)) return []
+
+      return savedScores
+        .map(Number)
+        .filter(score => Number.isFinite(score) && score > 0)
+        .sort((a, b) => b - a)
+        .slice(0, 5)
+    } catch {
+      return []
+    }
+  }
+
+  recordScore(score) {
+    if (!Number.isFinite(score) || score <= 0) return
+
+    this.leaderboard = [...this.leaderboard, Math.floor(score)]
+      .sort((a, b) => b - a)
+      .slice(0, 5)
+
+    try {
+      localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(this.leaderboard))
+    } catch {
+      // The in-memory leaderboard still works when browser storage is blocked.
+    }
+  }
+
+  formatLeaderboard() {
+    return Array.from({ length: 5 }, (_, index) => {
+      const score = this.leaderboard[index]
+      return `${index + 1}.  ${score === undefined ? '—' : score.toLocaleString()}`
+    }).join('\n')
   }
 
   startGame() {
@@ -626,6 +680,7 @@ export default class GameScene extends Phaser.Scene {
   endGame(reason) {
     if (this.gameOver) return
     this.gameOver = true
+    this.recordScore(this.score)
 
     this.spawnTimer?.remove(false)
     this.bgm?.stop()
@@ -638,34 +693,48 @@ export default class GameScene extends Phaser.Scene {
       .setOrigin(0)
       .setDepth(190)
 
-    const panel = this.add.rectangle(WIDTH / 2, HEIGHT / 2, 420, 410, BRAND_PANEL, 1)
+    const panel = this.add.rectangle(WIDTH / 2, 500, 420, 590, BRAND_PANEL, 1)
       .setStrokeStyle(2, 0xffffff, 0.09)
       .setDepth(191)
 
-    this.add.text(WIDTH / 2, 360, reason, {
+    this.add.text(WIDTH / 2, 260, reason, {
       fontFamily: 'Arial Black, Arial',
       fontSize: '36px',
       color: BRAND_RED_LIGHT
     }).setOrigin(0.5).setDepth(192)
 
-    this.add.text(WIDTH / 2, 425, 'FINAL SCORE', {
+    this.add.text(WIDTH / 2, 315, 'FINAL SCORE', {
       fontFamily: 'Arial',
       fontSize: '15px',
       color: '#ffffff',
       alpha: 0.55
     }).setOrigin(0.5).setDepth(192)
 
-    this.add.text(WIDTH / 2, 485, String(this.score), {
+    this.add.text(WIDTH / 2, 375, String(this.score), {
       fontFamily: 'Arial Black, Arial',
-      fontSize: '70px',
+      fontSize: '64px',
       color: '#ffffff'
     }).setOrigin(0.5).setDepth(192)
 
-    const btn = this.add.rectangle(WIDTH / 2, 600, 250, 68, BRAND_RED)
+    this.add.text(WIDTH / 2, 445, 'TOP 5 SCORES', {
+      fontFamily: 'Arial Black, Arial',
+      fontSize: '18px',
+      color: BRAND_RED_LIGHT
+    }).setOrigin(0.5).setDepth(192)
+
+    this.add.text(WIDTH / 2, 475, this.formatLeaderboard(), {
+      fontFamily: 'Arial Black, Arial',
+      fontSize: '16px',
+      color: '#ffffff',
+      align: 'center',
+      lineSpacing: 5
+    }).setOrigin(0.5, 0).setDepth(192)
+
+    const btn = this.add.rectangle(WIDTH / 2, 700, 250, 68, BRAND_RED)
       .setInteractive({ useHandCursor: true })
       .setDepth(192)
 
-    this.add.text(WIDTH / 2, 600, 'PLAY AGAIN', {
+    this.add.text(WIDTH / 2, 700, 'PLAY AGAIN', {
       fontFamily: 'Arial Black, Arial',
       fontSize: '21px',
       color: '#ffffff'
