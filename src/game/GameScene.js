@@ -55,6 +55,10 @@ export default class GameScene extends Phaser.Scene {
       'slice',
       `${import.meta.env.BASE_URL}audio/slice.mp3`
     )
+    this.load.audio(
+      'bomb',
+      `${import.meta.env.BASE_URL}audio/bomb.mp3`
+    )
   }
 
   create() {
@@ -328,6 +332,15 @@ export default class GameScene extends Phaser.Scene {
     bomb.setAngularVelocity(Phaser.Math.Between(-190, 190))
     bomb.body.setCircle(38, 12, 12)
 
+    this.tweens.add({
+      targets: bomb,
+      scale: { from: 0.84, to: 0.98 },
+      duration: 320,
+      ease: 'Sine.InOut',
+      yoyo: true,
+      repeat: -1
+    })
+
     this.activeObjects.add(bomb)
   }
 
@@ -495,22 +508,71 @@ export default class GameScene extends Phaser.Scene {
   triggerBomb(bomb) {
     const x = bomb.x
     const y = bomb.y
+    this.tweens.killTweensOf(bomb)
     bomb.destroy()
 
+    this.sound.play('bomb', { volume: 0.85 })
     this.cameras.main.shake(330, 0.018)
     this.cameras.main.flash(220, 255, 95, 50)
 
+    const core = this.add.circle(x, y, 30, 0xff713f, 0.95).setDepth(211)
+    const shockwave = this.add.circle(x, y, 34, 0xffd166, 0)
+      .setStrokeStyle(10, 0xffd166, 0.95)
+      .setDepth(210)
+
     const boom = this.add.text(x, y, '💥', {
       fontSize: '110px'
-    }).setOrigin(0.5).setDepth(150)
+    }).setOrigin(0.5).setScale(0.35).setDepth(213)
+
+    this.tweens.add({
+      targets: core,
+      scale: 4.5,
+      alpha: 0,
+      duration: 420,
+      ease: 'Quad.Out',
+      onComplete: () => core.destroy()
+    })
+
+    this.tweens.add({
+      targets: shockwave,
+      scale: 5.2,
+      alpha: 0,
+      duration: 520,
+      ease: 'Cubic.Out',
+      onComplete: () => shockwave.destroy()
+    })
 
     this.tweens.add({
       targets: boom,
-      scale: 1.6,
+      scale: 1.65,
       alpha: 0,
-      duration: 470,
+      duration: 560,
+      ease: 'Back.Out',
       onComplete: () => boom.destroy()
     })
+
+    for (let i = 0; i < 18; i++) {
+      const angle = Phaser.Math.FloatBetween(0, Math.PI * 2)
+      const distance = Phaser.Math.Between(70, 165)
+      const debris = this.add.circle(
+        x,
+        y,
+        Phaser.Math.Between(3, 8),
+        Phaser.Utils.Array.GetRandom([0xff5f45, 0xffa43a, 0xffe06b]),
+        1
+      ).setDepth(212)
+
+      this.tweens.add({
+        targets: debris,
+        x: x + Math.cos(angle) * distance,
+        y: y + Math.sin(angle) * distance,
+        scale: 0.15,
+        alpha: 0,
+        duration: Phaser.Math.Between(380, 650),
+        ease: 'Quad.Out',
+        onComplete: () => debris.destroy()
+      })
+    }
 
     this.endGame('BOOM!')
   }
@@ -544,6 +606,7 @@ export default class GameScene extends Phaser.Scene {
 
       if (obj.y > HEIGHT + 130) {
         this.activeObjects.delete(obj)
+        this.tweens.killTweensOf(obj)
 
         if (!obj.isBomb && !obj.sliced) {
           this.loseLife()
