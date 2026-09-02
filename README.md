@@ -39,29 +39,6 @@ The deployable files will be created in `dist/`.
 
 Pushes to `main` are automatically built and deployed to GitHub Pages.
 
-## Next art upgrade
+## Artwork
 
-Replace the current emoji placeholders with transparent PNG/WebP food artwork.
-
-Recommended assets:
-
-```text
-public/assets/food/
-  nasi-lemak.png
-  nasi-lemak-left.png
-  nasi-lemak-right.png
-  curry-puff.png
-  curry-puff-left.png
-  curry-puff-right.png
-  fried-chicken.png
-  fried-chicken-left.png
-  fried-chicken-right.png
-  roti-canai.png
-  roti-canai-left.png
-  roti-canai-right.png
-  bao.png
-  bao-left.png
-  bao-right.png
-```
-
-For the nasi lemak art, use the classic Malaysian triangular banana-leaf/paper packet rather than a rice-ball graphic.
+The food uses original transparent PNG game sprites stored in `public/assets/food/`.

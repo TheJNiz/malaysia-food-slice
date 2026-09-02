@@ -4,35 +4,30 @@ const FOOD_TYPES = [
   {
     key: 'nasi-lemak',
     label: 'Nasi Lemak',
-    emoji: '🍙',
     points: 12,
     tint: 0xf5df8c
   },
   {
     key: 'curry-puff',
     label: 'Curry Puff',
-    emoji: '🥟',
     points: 10,
     tint: 0xd7a24f
   },
   {
     key: 'fried-chicken',
     label: 'Fried Chicken',
-    emoji: '🍗',
     points: 15,
     tint: 0xd7833d
   },
   {
     key: 'roti-canai',
     label: 'Roti Canai',
-    emoji: '🫓',
     points: 10,
     tint: 0xe5bd77
   },
   {
     key: 'bao',
     label: 'Bao',
-    emoji: '🍥',
     points: 11,
     tint: 0xf3eee0
   }
@@ -59,6 +54,13 @@ export default class GameScene extends Phaser.Scene {
       'bomb',
       `${import.meta.env.BASE_URL}audio/bomb.mp3`
     )
+
+    for (const type of FOOD_TYPES) {
+      this.load.image(
+        `food-${type.key}`,
+        `${import.meta.env.BASE_URL}assets/food/${type.key}.png`
+      )
+    }
   }
 
   create() {
@@ -212,9 +214,10 @@ export default class GameScene extends Phaser.Scene {
       align: 'center'
     }).setOrigin(0.5)
 
-    const foods = this.add.text(WIDTH / 2, 430, '🍙   🥟   🍗   🫓   🍥', {
-      fontSize: '48px'
-    }).setOrigin(0.5)
+    const foodImages = FOOD_TYPES.map((type, index) => (
+      this.add.image(WIDTH / 2 + (index - 2) * 72, 430, `food-${type.key}`)
+        .setDisplaySize(58, 58)
+    ))
 
     const subtitle = this.add.text(WIDTH / 2, 500, 'Nasi lemak • Curry puff • Fried chicken\nRoti canai • Bao', {
       fontFamily: 'Arial',
@@ -241,7 +244,16 @@ export default class GameScene extends Phaser.Scene {
 
     button.on('pointerdown', () => this.startGame())
 
-    this.overlay.add([shade, panel, title, foods, subtitle, warning, button, buttonText])
+    this.overlay.add([
+      shade,
+      panel,
+      title,
+      ...foodImages,
+      subtitle,
+      warning,
+      button,
+      buttonText
+    ])
   }
 
   startGame() {
@@ -289,9 +301,8 @@ export default class GameScene extends Phaser.Scene {
       .setScale(0.82)
       .setAlpha(0.96)
 
-    const emoji = this.add.text(0, -4, type.emoji, {
-      fontSize: type.key === 'nasi-lemak' ? '53px' : '56px'
-    }).setOrigin(0.5)
+    const art = this.add.image(0, -4, `food-${type.key}`)
+      .setDisplaySize(78, 78)
 
     const tag = this.add.text(0, 50, type.label, {
       fontFamily: 'Arial Black, Arial',
@@ -301,7 +312,7 @@ export default class GameScene extends Phaser.Scene {
       padding: { left: 6, right: 6, top: 3, bottom: 3 }
     }).setOrigin(0.5)
 
-    container.add([plate, emoji, tag])
+    container.add([plate, art, tag])
     container.foodType = type
     container.isBomb = false
     container.sliced = false
@@ -448,11 +459,18 @@ export default class GameScene extends Phaser.Scene {
   }
 
   createSliceEffect(x, y, foodType) {
-    const left = this.add.text(x, y, foodType.emoji, { fontSize: '46px' })
-      .setOrigin(0.5).setDepth(30).setAngle(-20)
+    const textureKey = `food-${foodType.key}`
+    const left = this.add.image(x, y, textureKey)
+      .setDisplaySize(82, 82)
+      .setCrop(0, 0, 128, 256)
+      .setDepth(30)
+      .setAngle(-20)
 
-    const right = this.add.text(x, y, foodType.emoji, { fontSize: '46px' })
-      .setOrigin(0.5).setDepth(30).setAngle(20)
+    const right = this.add.image(x, y, textureKey)
+      .setDisplaySize(82, 82)
+      .setCrop(128, 0, 128, 256)
+      .setDepth(30)
+      .setAngle(20)
 
     this.physics.add.existing(left)
     this.physics.add.existing(right)
