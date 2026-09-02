@@ -243,10 +243,10 @@ export default class GameScene extends Phaser.Scene {
 
     const leaderboardRows = this.createLeaderboardRows(562)
 
-    const button = this.add.rectangle(WIDTH / 2, 770, 250, 68, BRAND_RED)
+    const button = this.add.rectangle(WIDTH / 2, 755, 250, 68, BRAND_RED)
       .setInteractive({ useHandCursor: true })
 
-    const buttonText = this.add.text(WIDTH / 2, 770, 'START SLICING', {
+    const buttonText = this.add.text(WIDTH / 2, 755, 'START SLICING', {
       fontFamily: 'Arial Black, Arial',
       fontSize: '20px',
       color: '#ffffff'
