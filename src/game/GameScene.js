@@ -68,6 +68,10 @@ export default class GameScene extends Phaser.Scene {
       'out-of-lives',
       `${import.meta.env.BASE_URL}audio/out-of-lives.mp3`
     )
+    this.load.audio(
+      'missed-food',
+      `${import.meta.env.BASE_URL}audio/missed-food.mp3`
+    )
 
     for (const type of FOOD_TYPES) {
       this.load.image(
@@ -666,6 +670,8 @@ export default class GameScene extends Phaser.Scene {
     if (this.lives <= 0) {
       this.sound.play('out-of-lives', { volume: 0.85 })
       this.endGame('Out of lives!')
+    } else {
+      this.sound.play('missed-food', { volume: 0.72 })
     }
   }
 
