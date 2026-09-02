@@ -127,14 +127,6 @@ export default class GameScene extends Phaser.Scene {
   }
 
   createTextures() {
-    if (!this.textures.exists('food-circle')) {
-      const g = this.make.graphics({ x: 0, y: 0, add: false })
-      g.fillStyle(0xffffff)
-      g.fillCircle(50, 50, 46)
-      g.generateTexture('food-circle', 100, 100)
-      g.destroy()
-    }
-
     if (!this.textures.exists('bomb')) {
       const g = this.make.graphics({ x: 0, y: 0, add: false })
 
@@ -293,32 +285,19 @@ export default class GameScene extends Phaser.Scene {
     const y = HEIGHT + 75
 
     const container = this.add.container(x, y)
-    container.setSize(100, 100)
+    container.setSize(110, 110)
     container.setDepth(20)
 
-    const plate = this.add.image(0, 0, 'food-circle')
-      .setTint(type.tint)
-      .setScale(0.82)
-      .setAlpha(0.96)
+    const art = this.add.image(0, 0, `food-${type.key}`)
+      .setDisplaySize(102, 102)
 
-    const art = this.add.image(0, -4, `food-${type.key}`)
-      .setDisplaySize(78, 78)
-
-    const tag = this.add.text(0, 50, type.label, {
-      fontFamily: 'Arial Black, Arial',
-      fontSize: '10px',
-      color: '#ffffff',
-      backgroundColor: 'rgba(0,0,0,.62)',
-      padding: { left: 6, right: 6, top: 3, bottom: 3 }
-    }).setOrigin(0.5)
-
-    container.add([plate, art, tag])
+    container.add(art)
     container.foodType = type
     container.isBomb = false
     container.sliced = false
 
     this.physics.add.existing(container)
-    container.body.setCircle(42, 8, 8)
+    container.body.setCircle(50, 5, 5)
 
     const targetX = Phaser.Math.Between(95, WIDTH - 95)
     const dx = targetX - x
@@ -374,7 +353,7 @@ export default class GameScene extends Phaser.Scene {
     for (const obj of [...this.activeObjects]) {
       if (!obj.active || obj.sliced) continue
 
-      const radius = obj.isBomb ? 43 : 48
+      const radius = obj.isBomb ? 43 : 55
       if (this.segmentIntersectsCircle(this.lastPointer, current, obj.x, obj.y, radius)) {
         this.sliceObject(obj)
       }
@@ -461,13 +440,13 @@ export default class GameScene extends Phaser.Scene {
   createSliceEffect(x, y, foodType) {
     const textureKey = `food-${foodType.key}`
     const left = this.add.image(x, y, textureKey)
-      .setDisplaySize(82, 82)
+      .setDisplaySize(107, 107)
       .setCrop(0, 0, 128, 256)
       .setDepth(30)
       .setAngle(-20)
 
     const right = this.add.image(x, y, textureKey)
-      .setDisplaySize(82, 82)
+      .setDisplaySize(107, 107)
       .setCrop(128, 0, 128, 256)
       .setDepth(30)
       .setAngle(20)
