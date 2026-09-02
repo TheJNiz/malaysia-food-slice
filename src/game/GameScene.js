@@ -46,6 +46,13 @@ export default class GameScene extends Phaser.Scene {
     super('game')
   }
 
+  preload() {
+    this.load.audio(
+      'nasi-lemak-dash',
+      `${import.meta.env.BASE_URL}audio/nasi-lemak-dash.mp3`
+    )
+  }
+
   create() {
     this.score = 0
     this.lives = 3
@@ -54,6 +61,7 @@ export default class GameScene extends Phaser.Scene {
     this.gameStarted = false
     this.gameOver = false
     this.lastPointer = null
+    this.bgm = null
     this.activeObjects = new Set()
     this.trailPoints = []
 
@@ -231,6 +239,11 @@ export default class GameScene extends Phaser.Scene {
   startGame() {
     this.overlay?.destroy(true)
     this.gameStarted = true
+    this.bgm = this.sound.add('nasi-lemak-dash', {
+      loop: true,
+      volume: 0.35
+    })
+    this.bgm.play()
 
     this.spawnTimer = this.time.addEvent({
       delay: 730,
@@ -540,6 +553,7 @@ export default class GameScene extends Phaser.Scene {
     this.gameOver = true
 
     this.spawnTimer?.remove(false)
+    this.bgm?.stop()
 
     for (const obj of [...this.activeObjects]) {
       if (obj.body) obj.body.enable = false
@@ -587,6 +601,7 @@ export default class GameScene extends Phaser.Scene {
 
   cleanup() {
     this.spawnTimer?.remove(false)
+    this.bgm?.destroy()
     this.activeObjects?.clear()
   }
 }
