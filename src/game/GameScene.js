@@ -51,6 +51,10 @@ export default class GameScene extends Phaser.Scene {
       'nasi-lemak-dash',
       `${import.meta.env.BASE_URL}audio/nasi-lemak-dash.mp3`
     )
+    this.load.audio(
+      'slice',
+      `${import.meta.env.BASE_URL}audio/slice.mp3`
+    )
   }
 
   create() {
@@ -401,6 +405,8 @@ export default class GameScene extends Phaser.Scene {
     const { foodType } = obj
     const x = obj.x
     const y = obj.y
+
+    this.sound.play('slice', { volume: 0.7 })
 
     this.score += foodType.points
     this.combo += 1
