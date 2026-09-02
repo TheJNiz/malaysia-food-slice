@@ -180,11 +180,11 @@ export default class GameScene extends Phaser.Scene {
       color: '#ffffff'
     }).setDepth(100)
 
-    this.scoreLabel = this.add.text(28, 73, 'SCORE', {
-      fontFamily: 'Arial',
-      fontSize: '13px',
+    this.scoreLabel = this.add.text(28, 78, 'SCORE', {
+      fontFamily: 'Arial Black, Arial',
+      fontSize: '16px',
       color: '#ffffff',
-      alpha: 0.5
+      alpha: 0.65
     }).setDepth(100)
 
     this.livesText = this.add.text(WIDTH - 24, 34, '♥ ♥ ♥', {
@@ -237,16 +237,16 @@ export default class GameScene extends Phaser.Scene {
 
     const leaderboardTitle = this.add.text(WIDTH / 2, 525, 'TOP 5 SCORES', {
       fontFamily: 'Arial Black, Arial',
-      fontSize: '18px',
+      fontSize: '22px',
       color: BRAND_RED_LIGHT
     }).setOrigin(0.5)
 
     const leaderboardRows = this.createLeaderboardRows(562)
 
-    const button = this.add.rectangle(WIDTH / 2, 735, 250, 68, BRAND_RED)
+    const button = this.add.rectangle(WIDTH / 2, 770, 250, 68, BRAND_RED)
       .setInteractive({ useHandCursor: true })
 
-    const buttonText = this.add.text(WIDTH / 2, 735, 'START SLICING', {
+    const buttonText = this.add.text(WIDTH / 2, 770, 'START SLICING', {
       fontFamily: 'Arial Black, Arial',
       fontSize: '20px',
       color: '#ffffff'
@@ -302,17 +302,17 @@ export default class GameScene extends Phaser.Scene {
 
     for (let index = 0; index < 5; index++) {
       const score = this.leaderboard[index]
-      const y = startY + index * 28
+      const y = startY + index * 34
       const style = {
         fontFamily: 'Arial Black, Arial',
-        fontSize: '17px',
+        fontSize: '22px',
         color: '#ffffff'
       }
 
-      const rankText = this.add.text(WIDTH / 2 - 18, y, `${index + 1}.`, style)
+      const rankText = this.add.text(WIDTH / 2 - 22, y, `${index + 1}.`, style)
         .setOrigin(1, 0.5)
       const scoreText = this.add.text(
-        WIDTH / 2 + 2,
+        WIDTH / 2 + 5,
         y,
         score === undefined ? '—' : score.toLocaleString(),
         style
@@ -723,10 +723,10 @@ export default class GameScene extends Phaser.Scene {
     }).setOrigin(0.5).setDepth(192)
 
     this.add.text(WIDTH / 2, 315, 'FINAL SCORE', {
-      fontFamily: 'Arial',
-      fontSize: '15px',
+      fontFamily: 'Arial Black, Arial',
+      fontSize: '19px',
       color: '#ffffff',
-      alpha: 0.55
+      alpha: 0.68
     }).setOrigin(0.5).setDepth(192)
 
     this.add.text(WIDTH / 2, 375, String(this.score), {
@@ -737,7 +737,7 @@ export default class GameScene extends Phaser.Scene {
 
     this.add.text(WIDTH / 2, 445, 'TOP 5 SCORES', {
       fontFamily: 'Arial Black, Arial',
-      fontSize: '18px',
+      fontSize: '22px',
       color: BRAND_RED_LIGHT
     }).setOrigin(0.5).setDepth(192)
 
