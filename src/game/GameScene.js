@@ -40,6 +40,12 @@ const BRAND_RED_LIGHT = '#ff5b5c'
 const BRAND_PANEL = 0x1a0808
 const LEADERBOARD_KEY = 'foodtale-food-slice-top-scores'
 
+const BASE_SPAWN_DELAY = 730
+const MIN_SPAWN_DELAY = 460
+const BASE_BOMB_CHANCE = 0.08
+const MAX_BOMB_CHANCE = 0.18
+const DIFFICULTY_RAMP_SLICES = 60
+
 export default class GameScene extends Phaser.Scene {
   constructor() {
     super('game')
@@ -86,6 +92,8 @@ export default class GameScene extends Phaser.Scene {
     this.lives = 3
     this.combo = 0
     this.comboWindow = 0
+    this.sliceCount = 0
+    this.difficultyFactor = 0
     this.gameStarted = false
     this.gameOver = false
     this.lastPointer = null
@@ -343,22 +351,32 @@ export default class GameScene extends Phaser.Scene {
     this.bgm.play()
 
     this.spawnTimer = this.time.addEvent({
-      delay: 730,
+      delay: BASE_SPAWN_DELAY,
       loop: true,
       callback: this.spawnWave,
       callbackScope: this
     })
   }
 
+  increaseDifficulty() {
+    this.sliceCount += 1
+    this.difficultyFactor = Math.min(this.sliceCount / DIFFICULTY_RAMP_SLICES, 1)
+
+    if (this.spawnTimer) {
+      this.spawnTimer.delay = Phaser.Math.Linear(BASE_SPAWN_DELAY, MIN_SPAWN_DELAY, this.difficultyFactor)
+    }
+  }
+
   spawnWave() {
     if (this.gameOver) return
 
-    const count = Phaser.Math.Between(1, 3)
+    const maxCount = 3 + Math.round(this.difficultyFactor)
+    const count = Phaser.Math.Between(1, maxCount)
+    const bombChance = Phaser.Math.Linear(BASE_BOMB_CHANCE, MAX_BOMB_CHANCE, this.difficultyFactor)
 
     for (let i = 0; i < count; i++) {
       this.time.delayedCall(i * 100, () => {
         if (this.gameOver) return
-        const bombChance = this.score > 70 ? 0.13 : 0.08
         Math.random() < bombChance ? this.spawnBomb() : this.spawnFood()
       })
     }
@@ -499,6 +517,7 @@ export default class GameScene extends Phaser.Scene {
     this.score += foodType.points
     this.combo += 1
     this.comboWindow = this.time.now + 550
+    this.increaseDifficulty()
 
     this.scoreText.setText(String(this.score))
 
