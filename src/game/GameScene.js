@@ -421,7 +421,7 @@ export default class GameScene extends Phaser.Scene {
     bomb.sliced = false
 
     const targetX = Phaser.Math.Between(105, WIDTH - 105)
-    bomb.setVelocity((targetX - x) * 0.85, Phaser.Math.Between(-1080, -930))
+    bomb.setVelocity((targetX - x) * 0.85, Phaser.Math.Between(-1356, -1116))
     bomb.setAngularVelocity(Phaser.Math.Between(-190, 190))
     bomb.body.setCircle(38, 12, 12)
 
